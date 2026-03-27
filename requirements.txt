@@ -1,0 +1,6 @@
+Django~=5.2.11
+djangorestframework~=3.16.1
+django-debug-toolbar
+drf_spectacular
+psycopg==3.3.3
+psycopg-binary
