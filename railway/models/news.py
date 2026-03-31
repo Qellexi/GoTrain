@@ -23,7 +23,7 @@ class News(models.Model):
             MaxLengthValidator(1000)
         ]
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -49,7 +49,7 @@ class Notification(models.Model):
             MaxLengthValidator(200)
         ]
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.title

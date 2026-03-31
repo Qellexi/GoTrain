@@ -4,3 +4,8 @@ django-debug-toolbar
 drf_spectacular
 psycopg==3.3.3
 psycopg-binary
+djangorestframework-simplejwt
+celery
+redis
+django-celery-results
+django-filter

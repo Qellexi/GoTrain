@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "railway",
     "users",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ WSGI_APPLICATION = "GoTrain.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postrgesql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ["POSTGRES_DB"],
         "USER": os.environ["POSTGRES_USER"],
         "PASSWORD": os.environ["POSTGRES_PASSWORD"],
@@ -152,7 +153,7 @@ REST_FRAMEWORK = {
     # 'DEFAULT_AUTHENTICATION_CLASSES': [
     #     'rest_framework.authentication.TokenAuthentication',
     # ],
-    "DEFAULT_AUTHENTIFICATION_CLASSES": [
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -183,3 +184,6 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
     "ROTATE_REFRESH_TOKENS": False,
 }
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
