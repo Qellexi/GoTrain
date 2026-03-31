@@ -58,8 +58,9 @@ class TrainAdmin(admin.ModelAdmin):
 class JourneyAdmin(admin.ModelAdmin):
     list_display = ("route", "train", "departure_time", "arrival_time")
     list_filter = ("route", "departure_time", "train")
+    readonly_fields = ['arrival_time']
     filter_horizontal = ("staff",)
-
+    search_fields = ("route__source__name", "route__destination__name", "train__name")
 
 # -----------------------
 # Order

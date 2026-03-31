@@ -1,5 +1,9 @@
 import traceback
 
+from celery.fixups.django import DjangoFixup
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
+
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -10,6 +14,7 @@ from railway.api.serializers.journey import (
     JourneyRetrieveSerializer,
     TimetableSerializer,
 )
+from railway.filterset.journey import JourneyFilter
 from railway.models.journey import Journey
 
 
@@ -20,6 +25,8 @@ class JourneyViewSet(
     GenericViewSet,
 ):
     queryset = Journey.objects.all()
+    filter_backends = [DjangoFilterBackend,]
+    filterset_class = JourneyFilter
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -52,8 +59,11 @@ class JourneyViewSet(
         Query param: ?station=<station_id>
         """
         station_id = request.query_params.get("station")
+        now = timezone.now()
         qs = Journey.objects.select_related(
             "train", "route__source", "route__destination"
+        ).filter(
+            departure_time__gte=now
         ).order_by("departure_time")
 
         if station_id:
@@ -69,8 +79,11 @@ class JourneyViewSet(
         Query param: ?station=<station_id>
         """
         station_id = request.query_params.get("station")
+        now = timezone.now()
         qs = Journey.objects.select_related(
             "train", "route__source", "route__destination"
+        ).filter(
+            departure_time__gte=now
         ).order_by("arrival_time")
 
         if station_id:

@@ -4,6 +4,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from railway.api.serializers.news import NewsReadSerializer, NewsDetailSerializer, NewsWriteSerializer
 from railway.models import News
+from railway.permissions import IsManager
 
 
 class NewsViewSet(
@@ -16,7 +17,7 @@ class NewsViewSet(
 
     def get_permissions(self):
         if self.action in ("create", "update"):
-            return [IsAuthenticated(), IsAdminUser()]
+            return [IsAuthenticated(), IsAdminUser(), IsManager()]
         return [AllowAny()]
 
     def get_serializer_class(self):
