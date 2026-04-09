@@ -8,14 +8,36 @@ from users.models import CrewProfile
 
 
 class JourneySerializer(serializers.ModelSerializer):
+    stations = serializers.SerializerMethodField()
+    price_first_class = serializers.SerializerMethodField()
+    price_second_class = serializers.SerializerMethodField()
+    price_economy_class = serializers.SerializerMethodField()
+
+    def get_price_first_class(self, obj):
+        return obj.base_price * obj.first_class_multiplier
+    def get_price_second_class(self, obj):
+        return obj.base_price * obj.second_class_multiplier
+    def get_price_economy_class(self, obj):
+        return obj.base_price
+
+    def get_stations(self, obj):
+        return obj.route.route_stations.values_list(
+            "station__name",
+            flat=True  # to return a QuerySet of single values instead of 1-tuples
+        )
+
     class Meta:
         model = Journey
         fields = (
             "id",
             "train",
             "route",
+            "stations",
             "departure_time",
             "arrival_time",
+            "price_economy_class",
+            "price_second_class",
+            "price_first_class",
         )
 
         read_only_fields = ("arrival_time",)
@@ -41,6 +63,14 @@ class JourneyWriteSerializer(serializers.ModelSerializer):
             "staff",
         )
 
+class JourneyManagerUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Journey
+        fields = (
+            "departure_time",
+            "arrival_time",
+            "platform",
+        )
 
 class TimetableSerializer(serializers.ModelSerializer):
     source_station = serializers.CharField(source="route.source", read_only=True)

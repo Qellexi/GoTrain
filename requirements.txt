@@ -3,9 +3,10 @@ djangorestframework~=3.16.1
 django-debug-toolbar
 drf_spectacular
 psycopg==3.3.3
-psycopg-binary
+psycopg2-binary
 djangorestframework-simplejwt
 celery
 redis
 django-celery-results
 django-filter
+Pillow

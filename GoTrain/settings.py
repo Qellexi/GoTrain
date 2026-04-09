@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "railway",
     "users",
+    "profiles",
     "django_filters",
 ]
 

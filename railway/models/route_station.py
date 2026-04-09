@@ -8,6 +8,7 @@ class RouteStation(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="route_stations")
     station = models.ForeignKey(Station, on_delete=models.CASCADE)
     order = models.IntegerField()
+    break_time = models.IntegerField(default=0)
 
     class Meta:
         ordering = ["order"]
@@ -19,4 +20,4 @@ class RouteStation(models.Model):
         ]
 
     def __str__(self):
-        pass
+        return f"{self.station.name} (order: {self.order})"

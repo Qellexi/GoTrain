@@ -3,18 +3,27 @@ from django.db import models
 from railway.models.journey import Journey
 from railway.models.order import Order
 
+
 class Statuses(models.TextChoices):
-    PENDING = "pending"
-    BOOKED = "booked"
-    BOUGHT = "bought"
-    CANCELLED = "cancelled"
+    PENDING = "pending", "Pending"
+    BOOKED = "booked", "Booked"
+    BOUGHT = "bought", "Bought"
+    COMPLETED = "completed", "Completed"
+    CANCELLED = "cancelled", "Cancelled"
+
+
+class SeatClass(models.TextChoices):
+    FIRST_CLASS = "first_class", "First Class"
+    SECOND_CLASS = "second_class", "Second Class"
+    ECONOMY = "economy", "Economy"
 
 
 class Ticket(models.Model):
     STATUS_TRANSITIONS = {
         Statuses.PENDING: [Statuses.BOOKED, Statuses.CANCELLED],
         Statuses.BOOKED: [Statuses.BOUGHT, Statuses.CANCELLED],
-        Statuses.BOUGHT: [],
+        Statuses.BOUGHT: [Statuses.COMPLETED, Statuses.CANCELLED],
+        Statuses.COMPLETED: [],
         Statuses.CANCELLED: [],
     }
 
@@ -38,6 +47,17 @@ class Ticket(models.Model):
     booked_at = models.DateTimeField(null=True, blank=True)
     bought_at = models.DateTimeField(null=True, blank=True)
     payment_confirmation = models.BooleanField(default=False)
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0.00,
+    )
+
+    seat_class = models.CharField(
+        choices=SeatClass.choices,
+        default=SeatClass.SECOND_CLASS,
+    )
 
     class Meta:
         constraints = [
