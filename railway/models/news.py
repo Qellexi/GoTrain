@@ -3,6 +3,12 @@ from django.db import models
 
 
 class News(models.Model):
+    class Type(models.TextChoices):
+        DELAY = "delay", "Delay"
+        CANCELLATION = "cancellation", "Cancellation"
+        PLATFORM_CHANGE = "platform_change", "Platform change"
+        GENERAL = "general", "General"
+
     title = models.CharField(
         validators=[
             MinLengthValidator(5),
@@ -24,6 +30,12 @@ class News(models.Model):
         ]
     )
     created_at = models.DateTimeField(null=True, blank=True)
+
+    type = models.CharField(
+        max_length=15,
+        choices=Type.choices,
+        default=Type.GENERAL,
+    )
 
     def __str__(self):
         return self.title

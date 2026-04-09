@@ -19,3 +19,8 @@ class Route(models.Model):
 
     def __str__(self):
         return f"{self.source} -> {self.destination}"
+
+    def calculate_time(self, train):
+        general_time = (self.distance / train.train_type.average_speed) * 60
+        break_time = self.route_stations.aggregate(models.Sum('break_time'))['break_time__sum'] or 0
+        return int (general_time + break_time)

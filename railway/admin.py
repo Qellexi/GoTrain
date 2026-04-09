@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from railway.models import Train, TrainType
+from railway.models import Train, TrainType, RouteStation
 from railway.models.journey import Journey
 from railway.models.order import Order
 from railway.models.route import Route
@@ -21,12 +21,17 @@ class StationAdmin(admin.ModelAdmin):
 # -----------------------
 # Route
 # -----------------------
+class RouteStationInline(admin.TabularInline):
+    model = RouteStation
+    extra = 1
+    ordering = ["order"]
 
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
     list_display = ("source", "destination", "distance", "time")
     search_fields = ("source__name", "destination__name")
     list_filter = ("source", "destination")
+    inlines = [RouteStationInline]
 
 
 # -----------------------

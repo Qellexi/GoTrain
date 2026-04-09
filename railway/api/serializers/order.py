@@ -34,8 +34,4 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         for ticket in tickets_data:
             ticket.order = order
             ticket.save(update_fields=['order'])
-        delete_unpaid_ticket.apply_async(
-            args=(ticket.id,),
-            countdown=60 * 15,
-        )
         return order
