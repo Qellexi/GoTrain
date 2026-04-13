@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from railway.models.journey import Journey
@@ -26,7 +27,13 @@ class Ticket(models.Model):
         Statuses.COMPLETED: [],
         Statuses.CANCELLED: [],
     }
-
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        null=True,
+        blank=True,
+    )
     cargo = models.IntegerField()
     seat = models.IntegerField()
     journey = models.ForeignKey(

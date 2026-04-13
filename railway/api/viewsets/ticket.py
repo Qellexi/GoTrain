@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from railway.api.serializers.ticket import TicketSerializer, TicketRetrieveSerializer, \
-    TicketBookingSerializer, TicketPurchaseSerializer, TicketUpdateSerializer
+    TicketBookingSerializer, TicketUpdateSerializer
 from railway.models.ticket import Ticket, Statuses
 
 
@@ -27,14 +27,10 @@ class TicketViewSet(
             ticket = self.get_object()
             if ticket.status==Statuses.BOOKED and ticket.order is None:
                 return TicketUpdateSerializer
-            if ticket.status==Statuses.BOOKED and ticket.order is not None:
-                return TicketPurchaseSerializer
         return TicketBookingSerializer
 
     def get_queryset(self):
-        qs = self.queryset
-
-        return qs
+        return Ticket.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

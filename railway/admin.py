@@ -50,7 +50,7 @@ class TrainTypeAdmin(admin.ModelAdmin):
 
 @admin.register(Train)
 class TrainAdmin(admin.ModelAdmin):
-    list_display = ("name", "train_type", "cargo_num", "places_in_cargo")
+    list_display = ("id", "name", "train_type", "cargo_num", "places_in_cargo")
     list_filter = ("train_type",)
     search_fields = ("name",)
 
@@ -61,7 +61,7 @@ class TrainAdmin(admin.ModelAdmin):
 
 @admin.register(Journey)
 class JourneyAdmin(admin.ModelAdmin):
-    list_display = ("route", "train", "departure_time", "arrival_time")
+    list_display = ("id", "route", "train", "departure_time", "arrival_time")
     list_filter = ("route", "departure_time", "train")
     readonly_fields = ['arrival_time']
     filter_horizontal = ("staff",)

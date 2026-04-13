@@ -48,8 +48,19 @@ class TicketBookingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context['request']
+        validated_data["user"] = request.user
         passengers_data = validated_data.pop('passengers')
+        journey = validated_data['journey']
+        seat_class = validated_data.get('seat_class')
 
+        if seat_class == SeatClass.FIRST_CLASS:
+            price = journey.base_price * journey.first_class_multiplier
+        elif seat_class == SeatClass.SECOND_CLASS:
+            price = journey.base_price * journey.second_class_multiplier
+        else:
+            price = journey.base_price
+
+        validated_data["price"] = price
         validated_data["status"] = Statuses.BOOKED
         validated_data["booked_at"] = timezone.now()
         ticket = Ticket.objects.create(**validated_data)
@@ -71,12 +82,12 @@ class TicketBookingSerializer(serializers.ModelSerializer):
         seat_class = data["seat_class"]
 
         # перевірка діапазону місць залежно від класу
-        if seat_class == SeatClass.FIRST:
+        if seat_class == SeatClass.FIRST_CLASS:
             max_seats = journey.train.first_class_places
-        elif seat_class == SeatClass.SECOND:
+        elif seat_class == SeatClass.SECOND_CLASS:
             max_seats = journey.train.second_class_places
         else:
-            max_seats = journey.train.economy_class_places
+            max_seats = journey.train.economy_places
 
         if seat < 1 or seat > max_seats:
             raise serializers.ValidationError({
@@ -97,38 +108,6 @@ class TicketBookingSerializer(serializers.ModelSerializer):
         return data
 
 
-class TicketPurchaseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ticket
-        fields = ("payment_confirmation",)
-    def validate(self, data):
-        request = self.context['request']
-        instance = self.instance
-
-        if instance.price is None:
-            raise serializers.ValidationError({
-                "price": "Ticket price is not set!"
-            })
-        profile = request.user.profile
-        if profile.balance < instance.price:
-            raise serializers.ValidationError({
-                "balance": "Insufficient balance!"
-            })
-        return data
-
-    def update(self, instance, validated_data):
-        request = self.context['request']
-        profile = request.user.profile
-
-        #списуємо кошти
-        profile.balance -= instance.price
-        profile.save(update_fields=["balance"])
-
-        instance.status = Statuses.BOUGHT
-        instance.bought_at = timezone.now()
-        instance.payment_confirmation = validated_data["payment_confirmation"]
-        instance.save()
-        return instance
 
 class TicketUpdateSerializer(serializers.ModelSerializer):
     class Meta:
