@@ -2,6 +2,7 @@ services:
   gotrain:
     build:
       context: .
+    restart: on-failure
     env_file:
       - .env
     ports:

@@ -22,6 +22,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("railway.api.urls")),
     path("api/v1/users/", include("users.api.urls")),
+    path("api/v1/profiles/", include("profiles.api.urls")),
     # path("api/v1/swagger/")
 ]
 
