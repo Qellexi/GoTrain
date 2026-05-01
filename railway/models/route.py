@@ -5,12 +5,12 @@ from railway.models.station import Station
 
 class Route(models.Model):
     source = models.ForeignKey(
-        Station,
+        "railway.Station",
         on_delete=models.CASCADE,
         related_name='routes_from',
     )
     destination = models.ForeignKey(
-        Station,
+        "railway.Station",
         on_delete=models.CASCADE,
         related_name='routes_to',
     )

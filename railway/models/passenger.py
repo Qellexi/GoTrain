@@ -5,7 +5,7 @@ from railway.models import Ticket
 
 class Passenger(models.Model):
     ticket = models.ForeignKey(
-        Ticket,
+        "railway.Ticket",
         on_delete=models.CASCADE,
         related_name="passengers"
     )

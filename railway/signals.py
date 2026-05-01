@@ -1,8 +1,9 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from railway.models import Ticket, Journey, News, Statuses
+from railway.models import Ticket, Journey, News, Statuses, Notification
 from railway.tasks import delete_unpaid_ticket
+from users.models import User
 
 
 @receiver(post_save, sender=Ticket)
@@ -41,6 +42,7 @@ def journey_changed(sender, instance, **kwargs):
             full_description=f"Journey {instance.id} departure time changed from "
                              f"{old.departure_time} to {instance.departure_time}",
             type=News.Type.DELAY,
+            journey=instance,
         )
 
     if old.arrival_time != instance.arrival_time:
@@ -49,6 +51,7 @@ def journey_changed(sender, instance, **kwargs):
             full_description=f"Journey {instance.id} arrival time changed from "
                              f"{old.arrival_time} to {instance.arrival_time}",
             type=News.Type.DELAY,
+            journey=instance,
         )
 
     if old.platform != instance.platform:
@@ -56,6 +59,7 @@ def journey_changed(sender, instance, **kwargs):
             title=f"Platform change: {instance.route}",
             full_description=f"Platform changed from {old.platform} to {instance.platform}",
             type=News.Type.PLATFORM_CHANGE,
+            journey=instance,
         )
 
 @receiver(post_delete, sender=Journey)
@@ -64,4 +68,19 @@ def journey_deleted(sender, instance, **kwargs):
         title=f"Journey {instance.id} deleted",
         full_description=f"Journey {instance.route} | {instance.departure_time} has been cancelled.",
         type=News.Type.CANCELLATION,
+        journey=None, #journey is deleted
     )
+
+@receiver(post_save, sender=News)
+def create_notifications(sender, instance, created, **kwargs):
+    if created and instance.journey:
+        users = User.objects.filter(
+            tickets__journey=instance.journey,
+            tickets__status__in=[Statuses.BOOKED, Statuses.BOUGHT]
+        ).distinct()
+
+        notifications = [
+            Notification(user=user, news=instance)
+            for user in users
+        ]
+        Notification.objects.bulk_create(notifications)

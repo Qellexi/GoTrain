@@ -14,7 +14,7 @@ class Train(models.Model):
         max_length=100,
     )
     train_type = models.ForeignKey(
-        TrainType,
+        "railway.TrainType",
         on_delete=models.CASCADE,
     )
     cargo_num = models.PositiveIntegerField()
