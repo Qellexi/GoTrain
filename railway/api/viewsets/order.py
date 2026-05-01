@@ -53,6 +53,10 @@ class OrderViewSet(
         profile.save(update_fields=["balance"])
 
         # міняємо статус всіх квитків
-        tickets.update(status=Statuses.BOUGHT, bought_at=timezone.now())
+        tickets.update(
+            status=Statuses.BOUGHT,
+            bought_at=timezone.now(),
+            payment_confirmation=True
+        )
 
         return Response({"detail": f"Order paid successfully. Total: {total_price}."})

@@ -27,12 +27,30 @@ class TrainViewSet(
         train = self.get_object()
         cargo = request.query_params.get("cargo")
         journey_id = request.query_params.get("journey")
-        max_seats = train.places_in_cargo
-        taken = set(
-            Ticket.objects.filter(
-                journey_id=journey_id,
-                cargo=cargo
-            ).exclude(status=Statuses.CANCELLED).values_list("seat", flat=True)
-        )
-        seats = set(range(1, max_seats + 1)) - taken
-        return Response({"cargo": cargo, "seats": list(seats)})
+        # max_seats = train.places_in_cargo
+        taken_by_class = {}
+        for seat_class in ["first_class", "second_class", "economy"]:
+            taken_by_class[seat_class] = set(
+                Ticket.objects.filter(
+                    journey_id=journey_id,
+                    cargo=cargo,
+                    seat_class=seat_class
+                ).exclude(status=Statuses.CANCELLED).values_list("seat", flat=True)
+            )
+
+        result = {
+            "cargo": cargo,
+            "first_class": [
+                {"seat": i, "is_taken": i in taken_by_class["first_class"]}
+                for i in range(1, train.places_in_first_class + 1)
+            ],
+            "second_class": [
+                {"seat": i, "is_taken": i in taken_by_class["second_class"]}
+                for i in range(1, train.places_in_second_class + 1)
+            ],
+            "economy": [
+                {"seat": i, "is_taken": i in taken_by_class["economy"]}
+                for i in range(1, train.economy_places + 1)
+            ],
+        }
+        return Response(result)

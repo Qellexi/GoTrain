@@ -1,5 +1,3 @@
-import traceback
-
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -23,6 +21,7 @@ class JourneyViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     GenericViewSet,
 ):
     queryset = Journey.objects.all()
@@ -36,7 +35,7 @@ class JourneyViewSet(
             return JourneyRetrieveSerializer
         if self.action in ("departures", "arrivals"):
             return TimetableSerializer
-        if self.action == "PATCH":
+        if self.action == "partial_update" or self.action == "update":
             return JourneyManagerUpdateSerializer
         return JourneySerializer
 
@@ -49,7 +48,6 @@ class JourneyViewSet(
         try:
             return super().get_serializer(*args, **kwargs)
         except Exception as e:
-            traceback.print_exc()
             raise
 
     def get_queryset(self):

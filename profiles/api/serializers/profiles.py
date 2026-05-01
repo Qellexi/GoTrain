@@ -29,7 +29,7 @@ class ProfileRetrieveSerializer(serializers.ModelSerializer):
             "alternative_email",
             "date_of_birth",
             "points",
-            "money",
+            "balance",
             "total_journeys"
         )
 

@@ -30,7 +30,18 @@ class TicketViewSet(
         return TicketBookingSerializer
 
     def get_queryset(self):
-        return Ticket.objects.filter(user=self.request.user)
+        return Ticket.objects.filter(
+            user=self.request.user
+        ).select_related(
+            "journey",
+            "journey__train",
+            "journey__route",
+            "journey__route__source",
+            "journey__route__destination",
+            "order"
+        ).prefetch_related(
+            "passengers"
+        )
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

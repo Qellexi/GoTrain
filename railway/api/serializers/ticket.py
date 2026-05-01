@@ -40,7 +40,6 @@ class TicketBookingSerializer(serializers.ModelSerializer):
             "journey",
             "cargo",
             "seat",
-            "journey",
             "seat_class",
             "passengers"
         )
@@ -115,6 +114,7 @@ class TicketUpdateSerializer(serializers.ModelSerializer):
         fields = (
             "cargo",
             "seat",
+            "seat_class",
         )
         validators = []
     def validate(self, data):
