@@ -32,6 +32,14 @@ A Django REST API for a railway ticketing system. Allows users to search for jou
 
 ---
 
+## Database Schema
+
+![Database Schema](https://drive.google.com/uc?export=view&id=1LmatmR28gd_Ytv0jobkpT2GPLJ8hdN0f)
+
+[View full diagram](https://drive.google.com/file/d/1LmatmR28gd_Ytv0jobkpT2GPLJ8hdN0f/view?usp=sharing)
+
+---
+
 ## Project Structure
 
 ```
