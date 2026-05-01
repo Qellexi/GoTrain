@@ -10,3 +10,5 @@ redis
 django-celery-results
 django-filter
 Pillow
+twilio
+django-celery-results

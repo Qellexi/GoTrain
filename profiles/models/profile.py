@@ -15,7 +15,7 @@ class Profile(models.Model):
     )
     phone_number = models.CharField(max_length=15, blank=True)
     alternative_email = models.EmailField(blank=True)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
 
     points = models.PositiveIntegerField(default=0)
     balance = models.DecimalField(

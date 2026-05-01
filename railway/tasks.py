@@ -13,5 +13,5 @@ def delete_unpaid_ticket(ticket_id):
     if ticket.status == Statuses.BOOKED:
         order = ticket.order
         ticket.delete()
-        if not order.tickets.exists(): # якщо більше немає квитків в цьому order
+        if order is not None and not order.tickets.exists(): # якщо більше немає квитків в цьому order
             order.delete()              # видаляємо і сам order

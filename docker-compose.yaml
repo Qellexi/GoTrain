@@ -2,6 +2,7 @@ services:
   gotrain:
     build:
       context: .
+    restart: on-failure
     env_file:
       - .env
     ports:
@@ -42,8 +43,10 @@ services:
     env_file:
       - .env
     depends_on:
-      - redis
-      - db
+      redis:
+        condition: service_started
+      db:
+        condition: service_healthy
 
 volumes:
   postgres_data:

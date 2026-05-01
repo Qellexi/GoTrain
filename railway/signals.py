@@ -1,8 +1,8 @@
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
-from railway.models import Ticket, Journey, News
-from tasks import delete_unpaid_ticket
+from railway.models import Ticket, Journey, News, Statuses
+from railway.tasks import delete_unpaid_ticket
 
 
 @receiver(post_save, sender=Ticket)
@@ -12,11 +12,18 @@ def schedule_ticket_cancellation(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=Ticket)
-def update_profile_points(sender, instance, created, **kwargs):
-    if created and instance.status == 'bought':
-        profile = instance.order.profile
+def update_profile_points(sender, instance, **kwargs):
+    if not instance.pk:
+        return
+    try:
+        old = Ticket.objects.get(pk=instance.pk)
+    except Ticket.DoesNotExist:
+        return
+
+    if old.status == Statuses.BOOKED and instance.status == Statuses.BOUGHT:
+        profile = instance.order.user.profile
         profile.points += 50
-        profile.save()
+        profile.save(update_fields=['points'])
 
 @receiver(post_save, sender=Journey)
 def journey_changed(sender, instance, **kwargs):
@@ -40,7 +47,7 @@ def journey_changed(sender, instance, **kwargs):
         News.objects.create(
             title=f"Journey {instance.id} arrival time changed",
             full_description=f"Journey {instance.id} arrival time changed from "
-                             f"{old.departure_time} to {instance.departure_time}",
+                             f"{old.arrival_time} to {instance.arrival_time}",
             type=News.Type.DELAY,
         )
 

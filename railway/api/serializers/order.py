@@ -3,11 +3,12 @@ from rest_framework import serializers
 from railway.api.serializers.ticket import TicketRetrieveSerializer
 from railway.models import Ticket, Statuses
 from railway.models.order import Order
+from users.api.serializers.user import UserRetrieveSerializer
 from users.serializers import UserSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserRetrieveSerializer(read_only=True)
 
     class Meta:
         model = Order
@@ -26,6 +27,15 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ("tickets",)
+
+    def validate_tickets(self, tickets):
+        request = self.context['request']
+        for ticket in tickets:
+            if ticket.user != request.user:
+                raise serializers.ValidationError(
+                    f"Ticket {ticket.id} does not belong to you."
+                )
+        return tickets
 
     def create(self, validated_data):
         tickets_data = validated_data.pop('tickets')

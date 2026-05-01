@@ -25,6 +25,7 @@ class NewsDetailSerializer(serializers.ModelSerializer):
 
 class NewsWriteSerializer(serializers.ModelSerializer):
     class Meta:
+        model = News
         fields = (
             "title",
             "short_description",
