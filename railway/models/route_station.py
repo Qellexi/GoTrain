@@ -5,8 +5,8 @@ from railway.models.station import Station
 
 
 class RouteStation(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="route_stations")
-    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    route = models.ForeignKey("railway.Route", on_delete=models.CASCADE, related_name="route_stations")
+    station = models.ForeignKey("railway.Station", on_delete=models.CASCADE)
     order = models.IntegerField()
     break_time = models.IntegerField(default=0)
 

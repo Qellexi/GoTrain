@@ -9,12 +9,12 @@ from users.models.crew_profile import CrewProfile
 
 class Journey(models.Model):
     route = models.ForeignKey(
-        Route,
+        "railway.Route",
         on_delete=models.CASCADE,
         related_name="journeys",
     )
     train = models.ForeignKey(
-        Train,
+        "railway.Train",
         on_delete=models.CASCADE,
         related_name="journeys",
     )
